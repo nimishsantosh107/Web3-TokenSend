@@ -1,3 +1,5 @@
+import { Navbar, Welcome, Footer, Services, Transactions } from "./components";
+
 import "./App.css";
 
 function App() {
