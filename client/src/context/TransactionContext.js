@@ -23,7 +23,6 @@ export const TransactionProvider = (props) => {
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "",
-        keyword: "",
         message: "",
     });
 
@@ -66,7 +65,7 @@ export const TransactionProvider = (props) => {
         try {
             if (!window.ethereum) return alert("Install Metamask");
 
-            const { addressTo, amount, keyword, message } = formData;
+            const { addressTo, amount, message } = formData;
             const transactionContract = getTransactionContract();
             const parsedAmount = ethers.utils.parseEther(amount)._hex;
             // send ETH
@@ -87,7 +86,7 @@ export const TransactionProvider = (props) => {
                 addressTo,
                 parsedAmount,
                 message,
-                keyword
+                "NIL_KEYWORD" //TODO
             );
 
             // control loading state, wait for trx to finish

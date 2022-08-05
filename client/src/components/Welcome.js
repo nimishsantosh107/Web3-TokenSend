@@ -31,8 +31,8 @@ const Welcome = (props) => {
     const handleSendTransaction = (e) => {
         e.preventDefault();
 
-        const { addressTo, amount, keyword, message } = formData;
-        if (!addressTo || !amount || !keyword || !message) return;
+        const { addressTo, amount, message } = formData;
+        if (!addressTo || !amount || !message) return;
 
         sendTransaction();
     };
@@ -42,8 +42,8 @@ const Welcome = (props) => {
     };
 
     const commonStyles =
-        "min-h-[70px] mf:mx-3 sm:px-0 px-2 sm:min-w-[120px] flex justify-center \
-         items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
+        "min-h-[70px] sm:px-0 px-2 flex justify-center items-center\
+         border-[0.5px] border-gray-400 text-sm font-light text-white";
 
     return (
         <div className="flex w-full justify-center items-center">
@@ -106,13 +106,6 @@ const Welcome = (props) => {
                             name="amount"
                             type="number"
                             value={formData.amount}
-                            handleChange={handleInputChange}
-                        />
-                        <Input
-                            placeholder="Keyword (GIF)"
-                            name="keyword"
-                            type="text"
-                            value={formData.keyword}
                             handleChange={handleInputChange}
                         />
                         <Input
