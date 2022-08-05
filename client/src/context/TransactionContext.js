@@ -20,6 +20,8 @@ export const TransactionProvider = (props) => {
     const [transactionCount, setTransactionCount] = useState(
         localStorage.getItem("transactionCount")
     );
+    const [transactions, setTransactions] = useState([]);
+
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "",
@@ -29,7 +31,8 @@ export const TransactionProvider = (props) => {
     // effects
     useEffect(() => {
         checkIfWalletConnected();
-    }, []); //run at start of app
+        checkIfTransactionsExist();
+    }, [transactionCount]); //run at start of app
 
     // functions
     const checkIfWalletConnected = async () => {
@@ -39,9 +42,21 @@ export const TransactionProvider = (props) => {
             const accounts = await window.ethereum.request({ method: "eth_accounts" });
             if (accounts.length) {
                 setCurrentAccount(accounts[0]);
-                // getAllTransactions
+                getAllTransactions();
             }
             console.log("[1_CHECK]: ", accounts[0]);
+        } catch (e) {
+            console.error(e);
+            throw new Error("[ERR] No window.ethereum object");
+        }
+    };
+
+    const checkIfTransactionsExist = async () => {
+        try {
+            if (!window.ethereum) return alert("Install Metamask");
+            const transactionContract = getTransactionContract();
+            const trxCount = await transactionContract.getTransactionCount();
+            window.localStorage.setItem("transactionCount", trxCount);
         } catch (e) {
             console.error(e);
             throw new Error("[ERR] No window.ethereum object");
@@ -105,9 +120,36 @@ export const TransactionProvider = (props) => {
         }
     };
 
+    const getAllTransactions = async () => {
+        try {
+            if (!window.ethereum) return alert("Install Metamask");
+            const transactionContract = getTransactionContract();
+            const availableTransactions = await transactionContract.getAllTransactions();
+            const structuredTransactions = availableTransactions.map((trx) => ({
+                addressFrom: trx.sender,
+                addressTo: trx.receiver,
+                amount: parseInt(trx.amount._hex) / 10 ** 18,
+                message: trx.message,
+                timestamp: new Date(trx.timestamp.toNumber() * 1000).toLocaleString(),
+            }));
+            setTransactions(structuredTransactions);
+        } catch (e) {
+            console.error(e);
+            throw new Error("[ERR] No window.ethereum object");
+        }
+    };
+
     return (
         <TransactionContext.Provider
-            value={{ currentAccount, connectWallet, sendTransaction, formData, setFormData }}
+            value={{
+                currentAccount,
+                connectWallet,
+                sendTransaction,
+                transactions,
+                formData,
+                setFormData,
+                isLoading,
+            }}
         >
             {props.children}
         </TransactionContext.Provider>
