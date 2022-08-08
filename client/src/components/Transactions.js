@@ -2,8 +2,6 @@ import React, { useContext } from "react";
 
 import { TransactionContext } from "../context/TransactionContext";
 
-import dummyData from "../DUMMY";
-
 const TransactionCard = ({ addressFrom, addressTo, amount, message, timestamp }) => {
     return (
         <div
