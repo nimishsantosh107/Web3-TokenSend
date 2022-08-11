@@ -16,6 +16,7 @@ export const TransactionContext = React.createContext();
 
 export const TransactionProvider = (props) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [trxHash, setTrxHash] = useState("");
     const [currentAccount, setCurrentAccount] = useState("");
     const [transactionCount, setTransactionCount] = useState(
         localStorage.getItem("transactionCount")
@@ -105,6 +106,7 @@ export const TransactionProvider = (props) => {
             );
 
             // control loading state, wait for trx to finish
+            setTrxHash(trx0.hash);
             setIsLoading(true);
             console.log(`[3_SEND]: Loading - ${trx0.hash}`);
             await trx0.wait();
@@ -149,6 +151,7 @@ export const TransactionProvider = (props) => {
                 formData,
                 setFormData,
                 isLoading,
+                trxHash,
             }}
         >
             {props.children}

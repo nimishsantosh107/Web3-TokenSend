@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 
-import { AiFillPlayCircle } from "react-icons/ai";
+import { BiCopy } from "react-icons/bi";
+import { AiOutlineLink } from "react-icons/ai";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
 
@@ -21,8 +22,15 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = (props) => {
-    const { currentAccount, connectWallet, sendTransaction, formData, setFormData, isLoading } =
-        useContext(TransactionContext);
+    const {
+        currentAccount,
+        connectWallet,
+        sendTransaction,
+        formData,
+        setFormData,
+        isLoading,
+        trxHash,
+    } = useContext(TransactionContext);
 
     const handleConnectWallet = (e) => {
         connectWallet();
@@ -39,6 +47,15 @@ const Welcome = (props) => {
 
     const handleInputChange = (e, name) => {
         setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
+    };
+
+    const handleTrxHashCopy = () => {
+        navigator.clipboard.writeText(trxHash);
+    };
+
+    const handleTrxLinkClick = () => {
+        const rootURL = "https://rinkeby.etherscan.io/tx/";
+        window.open(rootURL + trxHash, "_blank");
     };
 
     const commonStyles =
@@ -118,8 +135,29 @@ const Welcome = (props) => {
 
                         <div className="h-[1px] w-full bg-gray-400 my-2"></div>
 
-                        {isLoading ? (
-                            <Loader />
+                        {isLoading && trxHash ? (
+                            <>
+                                <div className="w-full flex justify-center ">
+                                    <span className="my-2 w-full rounded-sm p-2 outline-none text-white border-none text-sm white-glassmorphism bg-inherit">
+                                        {trxHash.slice(0, 31) + "..."}
+                                    </span>
+                                    <span
+                                        onClick={handleTrxHashCopy}
+                                        className="flex items-center h-auto mx-2 my-2 p-2 cursor-pointer 
+                                                   rounded-sm outline-none text-white border-none text-sm white-glassmorphism bg-inherit"
+                                    >
+                                        <BiCopy />
+                                    </span>
+                                    <span
+                                        onClick={handleTrxLinkClick}
+                                        className="flex items-center h-fill my-2 p-2 cursor-pointer 
+                                                   rounded-sm outline-none text-white border-none text-sm white-glassmorphism bg-inherit"
+                                    >
+                                        <AiOutlineLink />
+                                    </span>
+                                </div>
+                                <Loader />
+                            </>
                         ) : (
                             <button
                                 className="text-white mt-2 w-full border-[1px] p-2 border-[#3d4f7c] rounded-full cursor-pointer"
